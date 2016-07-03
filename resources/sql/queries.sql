@@ -1,3 +1,5 @@
+-- -*- mode: sql; sql-product: postgres; -*-
+
 -- :name get-posts :? :*
 -- :doc gets a page of posts, in reverse chronological order
 select
@@ -6,17 +8,19 @@ select
   , last_modified
   , text
   , array_agg(tag.name) filter (where tag.name is not null) as tags
-from post
-left join post_tag on
-    post.id = post_tag.post_id
-left join tag on
-    post_tag.tag_id = tag.id
+from
+    post
+left join
+    post_tag on post.id = post_tag.post_id
+left join
+    tag on post_tag.tag_id = tag.id
 group by
     post.id
   , created
   , last_modified
   , text
-order by created desc
+order by
+    created desc
 limit :limit
 offset :offset;
 
